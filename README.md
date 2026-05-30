@@ -14,6 +14,12 @@ This repository is a step-by-step learning project for building simple OpenAI ag
 | `weather_agent.py` | A function-calling example where the model can fetch current weather for a city. |
 | `stock_agent.py` | A function-calling example with weather and stock price tools. |
 | `multi_tool_agent.py` | A multi-tool example that lets the model choose between calculator, weather, and stock tools. |
+| `file_reader_agent_csv.py` | Reads a CSV file with pandas and asks the model to summarize the first rows. |
+| `file_reader_agent_pdf.py` | Reads a PDF with pypdf and lets you ask questions about the document. |
+| `orchestration_agent.py` | An orchestration example that lets the model call multiple tools and combine the results. |
+| `Fact_Sales_1.csv` | Sample CSV data used by `file_reader_agent_csv.py`. |
+| `Meta.pdf` | Sample PDF document used by `file_reader_agent_pdf.py`. |
+| `sample.txt` | Small text sample for file-reading practice. |
 | `.env.example` | Shows the environment variable needed to run the project. |
 | `.gitignore` | Keeps secrets, virtual environments, and Python cache files out of Git. |
 
@@ -28,7 +34,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 Install the Python packages used by the scripts:
 
 ```bash
-pip install openai python-dotenv requests
+pip install openai python-dotenv requests pandas pypdf
 ```
 
 ## Run Examples
@@ -41,6 +47,9 @@ python calculator_agent.py
 python weather_agent.py
 python stock_agent.py
 python multi_tool_agent.py
+python file_reader_agent_csv.py
+python file_reader_agent_pdf.py
+python orchestration_agent.py
 ```
 
 Type `quit` to exit the chat-loop examples.
@@ -55,6 +64,9 @@ Type `quit` to exit the chat-loop examples.
 6. `weather_agent.py`
 7. `stock_agent.py`
 8. `multi_tool_agent.py`
+9. `file_reader_agent_csv.py`
+10. `file_reader_agent_pdf.py`
+11. `orchestration_agent.py`
 
 ## Notes
 
