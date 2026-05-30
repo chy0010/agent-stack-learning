@@ -1,0 +1,7 @@
+Python is a programming language.
+
+It is widely used in AI, machine learning,
+data engineering, web development,
+and automation.
+
+Python is popular because it is easy to learn.
