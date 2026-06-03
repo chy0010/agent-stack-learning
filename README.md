@@ -1,81 +1,127 @@
-# Agent Stack Learning
+# 🤖 Agent Stack Learning
 
-This repository is a step-by-step learning project for building simple OpenAI agents in Python. Each file focuses on one idea: basic chat, memory, personality, streaming, and tool calling.
+> A hands-on progression from your first chatbot to a fully orchestrated, MCP-powered AI agent — all in Python.
 
-## Files
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-API-412991?logo=openai&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-| File | What it teaches |
-| --- | --- |
-| `agent.py` | A basic one-question chatbot using the OpenAI API. |
-| `memory_agent.py` | A chatbot that remembers the current conversation by storing messages in a list. |
-| `personality_bot.py` | A chatbot with a system prompt that makes it act like a senior FAANG interviewer. |
-| `streaming_bot.py` | A chatbot that streams the answer live instead of waiting for the full response. |
-| `calculator_agent.py` | A function-calling example where the model can choose a calculator tool. |
-| `weather_agent.py` | A function-calling example where the model can fetch current weather for a city. |
-| `stock_agent.py` | A function-calling example with weather and stock price tools. |
-| `multi_tool_agent.py` | A multi-tool example that lets the model choose between calculator, weather, and stock tools. |
-| `file_reader_agent_csv.py` | Reads a CSV file with pandas and asks the model to summarize the first rows. |
-| `file_reader_agent_pdf.py` | Reads a PDF with pypdf and lets you ask questions about the document. |
-| `orchestration_agent.py` | An orchestration example that lets the model call multiple tools and combine the results. |
-| `mcp_server.py` | Creates a simple MCP server with time, stock, calculator, and weather tools. |
-| `mcp_client.py` | Connects to the MCP server and calls its tools directly. |
-| `mcp_agent.py` | Lets an OpenAI chat model choose tools, then routes those tool calls through the MCP server. |
-| `Fact_Sales_1.csv` | Sample CSV data used by `file_reader_agent_csv.py`. |
-| `Meta.pdf` | Sample PDF document used by `file_reader_agent_pdf.py`. |
-| `sample.txt` | Small text sample for file-reading practice. |
-| `.env.example` | Shows the environment variable needed to run the project. |
-| `.gitignore` | Keeps secrets, virtual environments, and Python cache files out of Git. |
+---
 
-## Setup
+## What You'll Learn
 
-Create a `.env` file based on `.env.example`:
+- How to call the OpenAI API from scratch
+- How to give an agent memory, personality, and streaming output
+- How to wire up **function/tool calling** so the model can run real code
+- How to handle **multi-tool orchestration** across several APIs
+- How to read and reason over **CSV and PDF files**
+- How to build and connect to an **MCP server** for modular, reusable tools
+
+---
+
+## Quick Start
 
 ```bash
-OPENAI_API_KEY=your_openai_api_key_here
-```
+# 1. Clone and enter the repo
+git clone https://github.com/chy0010/agent-stack-learning.git
+cd agent-stack-learning
 
-Install the Python packages used by the scripts:
+# 2. Set up your environment
+cp .env.example .env
+# → Add your OpenAI API key inside .env
 
-```bash
+# 3. Install dependencies
 pip install openai python-dotenv requests pandas pypdf mcp anyio
+
+# 4. Run your first agent
+python agent.py
 ```
 
-## Run Examples
+> Type `quit` to exit any chat-loop example.
+
+---
+
+## Learning Path
+
+Work through the scripts in order — each one builds on the last.
+
+| # | File | Concept |
+|---|------|---------|
+| 1 | `agent.py` | Single-turn chat with the OpenAI API |
+| 2 | `memory_agent.py` | Multi-turn memory via message history |
+| 3 | `personality_bot.py` | System prompts and persona shaping |
+| 4 | `streaming_bot.py` | Streaming responses token-by-token |
+| 5 | `calculator_agent.py` | Function calling — first tool integration |
+| 6 | `weather_agent.py` | Calling a real external API via tool use |
+| 7 | `stock_agent.py` | Multiple tools in one agent |
+| 8 | `multi_tool_agent.py` | Model chooses between calculator, weather & stocks |
+| 9 | `file_reader_agent_csv.py` | Reading & summarising CSV data with pandas |
+| 10 | `file_reader_agent_pdf.py` | Extracting text from PDFs and Q&A over them |
+| 11 | `orchestration_agent.py` | Chaining tool calls to combine results |
+| 12 | `mcp_server.py` | Building a reusable MCP tool server |
+| 13 | `mcp_client.py` | Connecting to the MCP server directly |
+| 14 | `mcp_agent.py` | Routing OpenAI tool calls through MCP |
+
+---
+
+## Architecture Overview
+
+```
+Basic Chat ──► Memory ──► Personality ──► Streaming
+                                              │
+                                              ▼
+                            Tool Calling (calculator / weather / stocks)
+                                              │
+                                              ▼
+                               File Readers (CSV / PDF)
+                                              │
+                                              ▼
+                              Orchestration Agent (multi-tool)
+                                              │
+                                              ▼
+                         MCP Server ◄──── MCP Agent ◄──── MCP Client
+```
+
+---
+
+## Sample Data
+
+| File | Used by |
+|------|---------|
+| `Fact_Sales_1.csv` | `file_reader_agent_csv.py` |
+| `Meta.pdf` | `file_reader_agent_pdf.py` |
+| `sample.txt` | General file-reading practice |
+
+---
+
+## Setup Details
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and fill in your key:
+
+```
+OPENAI_API_KEY=sk-...
+```
+
+### Running the MCP Examples
+
+The MCP agent requires the server to be running first:
 
 ```bash
-python agent.py
-python memory_agent.py
-python streaming_bot.py
-python calculator_agent.py
-python weather_agent.py
-python stock_agent.py
-python multi_tool_agent.py
-python file_reader_agent_csv.py
-python file_reader_agent_pdf.py
-python orchestration_agent.py
-python mcp_client.py
+# Terminal 1 — start the server
+python mcp_server.py
+
+# Terminal 2 — run the agent or client
 python mcp_agent.py
+python mcp_client.py
 ```
 
-Type `quit` to exit the chat-loop examples.
-
-## Learning Order
-
-1. `agent.py`
-2. `memory_agent.py`
-3. `personality_bot.py`
-4. `streaming_bot.py`
-5. `calculator_agent.py`
-6. `weather_agent.py`
-7. `stock_agent.py`
-8. `multi_tool_agent.py`
-9. `file_reader_agent_csv.py`
-10. `file_reader_agent_pdf.py`
-11. `orchestration_agent.py`
-12. `mcp_server.py`
-13. `mcp_client.py`
-14. `mcp_agent.py`
+---
 
 ## Notes
 
-This project is for learning. The calculator examples use Python `eval()`, which is useful for a small demo but should be replaced with a safer math parser in real applications.
+- The `calculator_agent.py` uses Python `eval()` — fine for demos, but swap it for a proper math parser in production.
+- All agents default to `gpt-4o-mini` to keep API costs low while learning.
+- No frameworks (LangChain, etc.) are used on purpose — everything is written against the raw OpenAI API so you can see exactly what's happening.
