@@ -17,6 +17,9 @@ This repository is a step-by-step learning project for building simple OpenAI ag
 | `file_reader_agent_csv.py` | Reads a CSV file with pandas and asks the model to summarize the first rows. |
 | `file_reader_agent_pdf.py` | Reads a PDF with pypdf and lets you ask questions about the document. |
 | `orchestration_agent.py` | An orchestration example that lets the model call multiple tools and combine the results. |
+| `mcp_server.py` | Creates a simple MCP server with time, stock, calculator, and weather tools. |
+| `mcp_client.py` | Connects to the MCP server and calls its tools directly. |
+| `mcp_agent.py` | Lets an OpenAI chat model choose tools, then routes those tool calls through the MCP server. |
 | `Fact_Sales_1.csv` | Sample CSV data used by `file_reader_agent_csv.py`. |
 | `Meta.pdf` | Sample PDF document used by `file_reader_agent_pdf.py`. |
 | `sample.txt` | Small text sample for file-reading practice. |
@@ -34,7 +37,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 Install the Python packages used by the scripts:
 
 ```bash
-pip install openai python-dotenv requests pandas pypdf
+pip install openai python-dotenv requests pandas pypdf mcp anyio
 ```
 
 ## Run Examples
@@ -50,6 +53,8 @@ python multi_tool_agent.py
 python file_reader_agent_csv.py
 python file_reader_agent_pdf.py
 python orchestration_agent.py
+python mcp_client.py
+python mcp_agent.py
 ```
 
 Type `quit` to exit the chat-loop examples.
@@ -67,6 +72,9 @@ Type `quit` to exit the chat-loop examples.
 9. `file_reader_agent_csv.py`
 10. `file_reader_agent_pdf.py`
 11. `orchestration_agent.py`
+12. `mcp_server.py`
+13. `mcp_client.py`
+14. `mcp_agent.py`
 
 ## Notes
 
