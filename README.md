@@ -1,10 +1,11 @@
 # 🤖 Agent Stack Learning
 
-> A hands-on progression from your first chatbot to a fully orchestrated, MCP-powered AI agent — all in Python.
+> A hands-on progression from your first chatbot to a fully orchestrated, RAG-powered AI agent — all in Python.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-API-412991?logo=openai&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-orange)
+![pgvector](https://img.shields.io/badge/pgvector-PostgreSQL-336791?logo=postgresql&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
@@ -14,9 +15,12 @@
 - How to call the OpenAI API from scratch
 - How to give an agent memory, personality, and streaming output
 - How to wire up **function/tool calling** so the model can run real code
+- How to build an **agentic loop** — the model keeps calling tools until it decides it's done
 - How to handle **multi-tool orchestration** across several APIs
 - How to read and reason over **CSV and PDF files**
 - How to build and connect to an **MCP server** for modular, reusable tools
+- How to implement **RAG from scratch** using embeddings and cosine similarity
+- How to scale RAG with a **pgvector PostgreSQL** vector database
 
 ---
 
@@ -29,10 +33,10 @@ cd agent-stack-learning
 
 # 2. Set up your environment
 cp .env.example .env
-# → Add your OpenAI API key inside .env
+# → Add your OpenAI API key (and PostgreSQL credentials for RAG examples)
 
 # 3. Install dependencies
-pip install openai python-dotenv requests pandas pypdf mcp anyio
+pip install openai python-dotenv requests pandas pypdf mcp anyio numpy psycopg2-binary
 
 # 4. Run your first agent
 python agent.py
@@ -62,6 +66,10 @@ Work through the scripts in order — each one builds on the last.
 | 12 | `mcp_server.py` | Building a reusable MCP tool server |
 | 13 | `mcp_client.py` | Connecting to the MCP server directly |
 | 14 | `mcp_agent.py` | Routing OpenAI tool calls through MCP |
+| 15 | `agent_loop.py` | Agentic loop — model runs until no more tool calls |
+| 16 | `rag_agent.py` | RAG from scratch: chunking, embeddings, cosine similarity |
+| 17 | `ingest_pdf_pgvector.py` | Ingesting a PDF into PostgreSQL with pgvector |
+| 18 | `rag_pgvector.py` | RAG with pgvector — vector search via SQL |
 
 ---
 
@@ -80,7 +88,38 @@ Basic Chat ──► Memory ──► Personality ──► Streaming
                               Orchestration Agent (multi-tool)
                                               │
                                               ▼
-                         MCP Server ◄──── MCP Agent ◄──── MCP Client
+                         MCP Server ◄──── MCP Agent ◄──── Agent Loop
+                                              │
+                                              ▼
+                    RAG (in-memory) ──► pgvector (PostgreSQL)
+                    chunk → embed → similarity search → answer
+```
+
+---
+
+## RAG Setup (pgvector)
+
+The RAG examples require a PostgreSQL database with the pgvector extension.
+
+```sql
+-- Run once in PostgreSQL
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE document_chunks (
+    id SERIAL PRIMARY KEY,
+    chunk_text TEXT,
+    embedding vector(1536)
+);
+```
+
+Then ingest your PDF and query it:
+
+```bash
+# Terminal 1 — ingest the PDF into the database
+python ingest_pdf_pgvector.py
+
+# Terminal 2 — ask questions
+python rag_pgvector.py
 ```
 
 ---
@@ -90,7 +129,7 @@ Basic Chat ──► Memory ──► Personality ──► Streaming
 | File | Used by |
 |------|---------|
 | `Fact_Sales_1.csv` | `file_reader_agent_csv.py` |
-| `Meta.pdf` | `file_reader_agent_pdf.py` |
+| `Meta.pdf` | `file_reader_agent_pdf.py`, `rag_agent.py`, `ingest_pdf_pgvector.py` |
 | `sample.txt` | General file-reading practice |
 
 ---
@@ -99,10 +138,17 @@ Basic Chat ──► Memory ──► Personality ──► Streaming
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and fill in your key:
+Copy `.env.example` to `.env` and fill in your keys:
 
 ```
 OPENAI_API_KEY=sk-...
+
+# For pgvector RAG examples
+PG_HOST=localhost
+PG_PORT=5432
+PG_DATABASE=rag_db
+PG_USER=postgres
+PG_PASSWORD=your_password
 ```
 
 ### Running the MCP Examples
@@ -115,7 +161,7 @@ python mcp_server.py
 
 # Terminal 2 — run the agent or client
 python mcp_agent.py
-python mcp_client.py
+python agent_loop.py
 ```
 
 ---
@@ -124,4 +170,5 @@ python mcp_client.py
 
 - The `calculator_agent.py` uses Python `eval()` — fine for demos, but swap it for a proper math parser in production.
 - All agents default to `gpt-4o-mini` to keep API costs low while learning.
+- `rag_agent.py` keeps embeddings in memory — fast for small docs, but doesn't persist between runs. Use `rag_pgvector.py` for persistence.
 - No frameworks (LangChain, etc.) are used on purpose — everything is written against the raw OpenAI API so you can see exactly what's happening.
